@@ -1,0 +1,12 @@
+<resources>
+    <style name="Theme.Sundial" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:colorAccent">#5B8FFF</item>
+        <item name="android:colorPrimary">#5B8FFF</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+    <color name="bg">#0F1115</color>
+</resources>
