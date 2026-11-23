@@ -31,4 +31,9 @@ class Prefs(ctx: Context) {
     var defaultReminder: Int
         get() = p.getInt("defaultReminder", 10)
         set(v) = p.edit().putInt("defaultReminder", v).apply()
+
+    /** Show reminder notifications. */
+    var notify: Boolean
+        get() = p.getBoolean("notify", true)
+        set(v) = p.edit().putBoolean("notify", v).apply()
 }

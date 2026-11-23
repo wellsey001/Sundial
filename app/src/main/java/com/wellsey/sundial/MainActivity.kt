@@ -108,11 +108,14 @@ class MainActivity : Activity() {
 
     private val observer = object : ContentObserver(ui) {
         override fun onChange(selfChange: Boolean) {
+            ui.removeCallbacks(widgetRunnable)
+            ui.postDelayed(widgetRunnable, 1500)
             ui.removeCallbacks(reloadRunnable)
             ui.postDelayed(reloadRunnable, 300)
         }
     }
     private val reloadRunnable = Runnable { reload() }
+    private val widgetRunnable = Runnable { io.execute { AgendaWidget.refresh(this) } }
     private var observing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,9 +124,13 @@ class MainActivity : Activity() {
         prefs = Prefs(this)
         buildUi()
         handleIntent(intent)
-        if (!Cal.hasPermission(this)) {
-            requestPermissions(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR), 1)
-        }
+        val wanted = mutableListOf<String>()
+        if (!Cal.hasPermission(this)) wanted += listOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+        if (android.os.Build.VERSION.SDK_INT >= 33 && prefs.notify &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) wanted += Manifest.permission.POST_NOTIFICATIONS
+        if (wanted.isNotEmpty()) requestPermissions(wanted.toTypedArray(), 1)
+        ReminderReceiver.ensureChannel(this)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -151,6 +158,7 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
+        ui.removeCallbacksAndMessages(null)
         if (observing) contentResolver.unregisterContentObserver(observer)
         io.shutdown()
         super.onDestroy()
@@ -164,6 +172,7 @@ class MainActivity : Activity() {
                 observing = true
             }
             Cal.syncNow(this)
+            io.execute { AgendaWidget.refresh(this) }
         }
         reload()
     }

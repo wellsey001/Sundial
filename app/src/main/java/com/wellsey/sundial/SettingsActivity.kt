@@ -69,6 +69,13 @@ class SettingsActivity : Activity() {
                     prefs.defaultReminder = reminderOpts[which]; dlg.dismiss(); build()
                 }.show()
         })
+        general.addView(toggle("Reminder notifications",
+            "If you also get reminders from another calendar app, turn its notifications off", prefs.notify) { on ->
+            prefs.notify = on
+            if (on && android.os.Build.VERSION.SDK_INT >= 33 &&
+                checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 2)
+        })
         general.addView(item("Sync now", "Ask your accounts to fetch the latest events") {
             Cal.syncNow(this)
             Toast.makeText(this, "Syncing…", Toast.LENGTH_SHORT).show()
@@ -94,6 +101,7 @@ class SettingsActivity : Activity() {
                     setOnCheckedChangeListener { _, on ->
                         if (on) hidden.remove(cal.id) else hidden.add(cal.id)
                         prefs.hidden = hidden.toSet()
+                        AgendaWidget.refresh(this@SettingsActivity)
                     }
                 }
                 row.addView(sw)
@@ -133,6 +141,22 @@ class SettingsActivity : Activity() {
         clipToOutline = true
         addView(content, FrameLayout.LayoutParams(MATCH, WRAP))
         layoutParams = lp(MATCH, WRAP).apply { bottomMargin = dp(8) }
+    }
+
+    private fun toggle(title: String, value: String, checked: Boolean, onChange: (Boolean) -> Unit): View {
+        val row = hbox().apply { setPadding(dp(16), dp(12), dp(12), dp(12)) }
+        val texts = vbox()
+        texts.addView(label(title, 16f))
+        texts.addView(label(value, 13f, Pal.sub, lines = 3).apply { setPadding(0, dp(3), dp(8), 0) })
+        row.addView(texts, lp(0, WRAP, 1f))
+        val sw = Switch(this).apply {
+            isChecked = checked
+            setOnCheckedChangeListener { _, on -> onChange(on) }
+        }
+        row.addView(sw)
+        row.pressable(dpf(14f))
+        row.setOnClickListener { sw.toggle() }
+        return row
     }
 
     private fun item(title: String, value: String, onClick: () -> Unit): View {

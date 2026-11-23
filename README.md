@@ -10,7 +10,9 @@ A clean calendar app for Android. It reads and writes the calendars already on y
 - Add, edit and delete events: all-day, repeats, reminders, location, notes
 - Delete just one repeat or the whole series
 - Show or hide each calendar, choose the week start, default calendar and reminder
-- Light and dark mode follow the system
+- Reminder notifications with snooze
+- Home-screen widget with today's date and your next events
+- Light and dark mode follow the system, plus a themed icon
 - Opens "add to calendar" links and event links from other apps
 
 Kotlin, no third-party libraries. Android 12 or newer.

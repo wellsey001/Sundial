@@ -472,6 +472,7 @@ class EventActivity : Activity() {
             return
         }
         setResult(RESULT_OK)
+        AgendaWidget.refresh(this)
         finish()
     }
 
@@ -498,6 +499,7 @@ class EventActivity : Activity() {
             Toast.makeText(this, "Couldn't delete the event", Toast.LENGTH_SHORT).show()
             return
         }
+        AgendaWidget.refresh(this)
         finish()
     }
 }

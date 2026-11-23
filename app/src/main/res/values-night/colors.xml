@@ -1,0 +1,6 @@
+<resources>
+    <color name="w_bg">#F01A1D23</color>
+    <color name="w_text">#ECEFF4</color>
+    <color name="w_sub">#9AA3B2</color>
+    <color name="w_accent">#FF9A6B</color>
+</resources>
