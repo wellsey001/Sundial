@@ -175,7 +175,7 @@ class EventActivity : Activity() {
         val root = vbox()
 
         val bar = hbox().apply { setPadding(dp(8), dp(10), dp(14), dp(10)) }
-        bar.addView(iconButton(Icon.Kind.CLOSE) { finish() })
+        bar.addView(iconButton(Icon.Kind.CLOSE, "Close") { finish() })
         bar.addView(label(if (readOnly) "Event" else if (isNew) "New event" else "Edit event", 18f, Pal.text, bold = true)
             .apply { setPadding(dp(8), 0, 0, 0) }, lp(0, WRAP, 1f))
         if (!readOnly) bar.addView(pill("Save", true) { save() })

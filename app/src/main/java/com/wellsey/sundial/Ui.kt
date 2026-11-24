@@ -69,6 +69,7 @@ fun View.pressable(radius: Float) {
     foreground = RippleDrawable(ColorStateList.valueOf(if (Pal.dark) 0x26FFFFFF else 0x1A000000), null, mask)
     isClickable = true
     isFocusable = true
+    defaultFocusHighlightEnabled = false
     setOnTouchListener { v, e ->
         when (e.actionMasked) {
             android.view.MotionEvent.ACTION_DOWN ->
@@ -230,8 +231,9 @@ class Icon(ctx: Context, var kind: Kind, var color: Int = Pal.text) : View(ctx) 
 }
 
 /** A round icon button. */
-fun Context.iconButton(kind: Icon.Kind, onClick: () -> Unit): Icon =
+fun Context.iconButton(kind: Icon.Kind, description: String? = null, onClick: () -> Unit): Icon =
     Icon(this, kind).apply {
+        contentDescription = description
         val size = dp(40)
         layoutParams = LinearLayout.LayoutParams(size, size)
         setPadding(dp(8), dp(8), dp(8), dp(8))

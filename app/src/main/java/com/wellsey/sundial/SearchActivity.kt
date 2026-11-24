@@ -34,7 +34,7 @@ class SearchActivity : Activity() {
 
         val root = vbox()
         val bar = hbox().apply { setPadding(dp(8), dp(10), dp(14), dp(10)) }
-        bar.addView(iconButton(Icon.Kind.BACK) { finish() })
+        bar.addView(iconButton(Icon.Kind.BACK, "Back") { finish() })
         val box = hbox().apply {
             glass(dpf(22f))
             setPadding(dp(14), 0, dp(10), 0)

@@ -237,10 +237,10 @@ class MainActivity : Activity() {
         titles.addView(titleMain)
         titles.addView(titleSub)
         header.addView(titles, lp(0, WRAP, 1f))
-        header.addView(iconButton(Icon.Kind.SEARCH) { startActivity(Intent(this, SearchActivity::class.java)) })
+        header.addView(iconButton(Icon.Kind.SEARCH, "Search") { startActivity(Intent(this, SearchActivity::class.java)) })
         header.addView(pill("Today", false) { goTo(LocalDate.now()) }.apply { glass(dpf(18f)) },
             lp(WRAP, WRAP).apply { leftMargin = dp(2); rightMargin = dp(2) })
-        header.addView(iconButton(Icon.Kind.MORE) { startActivity(Intent(this, SettingsActivity::class.java)) })
+        header.addView(iconButton(Icon.Kind.MORE, "Settings") { startActivity(Intent(this, SettingsActivity::class.java)) })
         col.addView(header, lp(MATCH, WRAP))
 
         tabs = Tabs(this, listOf("Month", "Week", "Day", "List"), mode) { setMode(it) }
@@ -329,6 +329,7 @@ class MainActivity : Activity() {
             elevation = dpf(8f)
             pressable(dpf(20f))
             setOnClickListener { newEvent(selected) }
+            contentDescription = "New event"
             addView(Icon(this@MainActivity, Icon.Kind.PLUS, Color.WHITE), FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER))
         }
         frame.addView(fab, FrameLayout.LayoutParams(dp(60), dp(60), Gravity.BOTTOM or Gravity.END).apply {
@@ -418,7 +419,7 @@ class MainActivity : Activity() {
                 titleMain.text = if (a.month == b.month) a.month.getDisplayName(TextStyle.FULL, loc)
                 else "${a.month.getDisplayName(TextStyle.SHORT, loc)} – ${b.month.getDisplayName(TextStyle.SHORT, loc)}"
                 val years = if (a.year == b.year) "${a.year}" else "${a.year}–${b.year}"
-                titleSub.text = "Week ${a.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)} · $years"
+                titleSub.text = "Week ${days[3].get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)} · $years"
             }
             DAY -> {
                 titleMain.text = selected.dayOfWeek.getDisplayName(TextStyle.FULL, loc)

@@ -25,7 +25,7 @@ class SettingsActivity : Activity() {
         prefs = Prefs(this)
         val root = vbox()
         val bar = hbox().apply { setPadding(dp(8), dp(10), dp(14), dp(10)) }
-        bar.addView(iconButton(Icon.Kind.BACK) { finish() })
+        bar.addView(iconButton(Icon.Kind.BACK, "Back") { finish() })
         bar.addView(label("Settings", 20f, Pal.text, bold = true).apply { setPadding(dp(8), 0, 0, 0) })
         root.addView(bar, lp(MATCH, WRAP))
         val scroll = ScrollView(this).apply { isVerticalScrollBarEnabled = false }

@@ -101,7 +101,7 @@ class TimelineHeader(ctx: Context) : View(ctx) {
         // Week number in the corner
         small.color = Pal.faint
         small.textAlign = Paint.Align.CENTER
-        days.firstOrNull()?.let {
+        days.getOrNull(min(3, days.size - 1))?.let {
             c.drawText("W${it.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)}", gutter / 2, dateRowH / 2 + ctx.dpf(4f), small)
         }
 
@@ -285,7 +285,7 @@ class TimelineGrid(ctx: Context) : View(ctx) {
         // Today's column
         val ti = days.indexOf(today)
         if (ti >= 0 && days.size > 1) {
-            fill.color = Pal.accentSoft and 0x00FFFFFF or 0x14000000
+            fill.color = (Pal.accent and 0x00FFFFFF) or (if (Pal.dark) 0x1A000000 else 0x12000000)
             c.drawRect(gutter + ti * cw, 0f, gutter + (ti + 1) * cw, height.toFloat(), fill)
         }
 
