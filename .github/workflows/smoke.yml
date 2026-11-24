@@ -39,6 +39,26 @@ jobs:
           disable-animations: false
           script: bash .github/smoke.sh
 
+      # Small copies of the screenshots, printed into the log so they can be read without downloads
+      - name: Print screenshots
+        if: always()
+        run: |
+          pip install --quiet pillow
+          python3 - <<'PY'
+          import base64, glob, io
+          from PIL import Image
+          for p in sorted(glob.glob("smoke/*.png")):
+              try:
+                  im = Image.open(p).convert("RGB")
+              except Exception as e:
+                  print("BAD", p, e); continue
+              im.thumbnail((400, 900))
+              b = io.BytesIO(); im.save(b, "JPEG", quality=72)
+              print("SHOT-BEGIN " + p.split("/")[-1])
+              print(base64.b64encode(b.getvalue()).decode())
+              print("SHOT-END")
+          PY
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:

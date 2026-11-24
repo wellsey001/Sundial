@@ -203,12 +203,6 @@ fun Activity.setSkyContent(content: View) {
     window.statusBarColor = Color.TRANSPARENT
     window.navigationBarColor = Color.TRANSPARENT
     window.isNavigationBarContrastEnforced = false
-    val light = if (Pal.dark) 0 else
-        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-    window.insetsController?.setSystemBarsAppearance(
-        light,
-        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-    )
     val root = FrameLayout(this).apply { background = SkyDrawable() }
     root.addView(content, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     root.setOnApplyWindowInsetsListener { _, insets ->
@@ -218,6 +212,13 @@ fun Activity.setSkyContent(content: View) {
         WindowInsets.CONSUMED
     }
     setContentView(root)
+    // Dark status-bar icons on the light sky. (Only possible once the window has its views.)
+    val light = if (Pal.dark) 0 else
+        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+    window.decorView.windowInsetsController?.setSystemBarsAppearance(
+        light,
+        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+    )
 }
 
 /** Fades and lifts children in, one after another. */
