@@ -112,7 +112,7 @@ class SkyDrawable : Drawable() {
 class Glass(
     private val host: View,
     var radius: Float,
-    var tint: Int = Pal.glass,
+    var glassTint: Int = Pal.glass,
     var border: Int = Pal.glassBorder,
     var highlight: Int = Pal.glassHighlight,
 ) : Drawable() {
@@ -163,7 +163,7 @@ class Glass(
             matrix.postTranslate(-loc[0].toFloat(), -loc[1].toFloat())
             c.drawBitmap(frost, matrix, bmpPaint)
         }
-        fill.color = if (frost != null) tint else Pal.bgSolid
+        fill.color = if (frost != null) glassTint else Pal.bgSolid
         c.drawRect(rect, fill)
         c.restore()
 
