@@ -127,11 +127,17 @@ class MonthView(ctx: Context) : View(ctx) {
 
             val list = events[date] ?: continue
             val room = ((ch - pillTop - pad) / (pillH + pillGap)).toInt().coerceAtLeast(1)
-            val shown = if (list.size > room) room - 1 else list.size
+            // When there isn't room for every event, the last line shares its space with a "+n" count
+            val shown = if (list.size > room) room else list.size
+            val hidden = list.size - shown
+            pillText.alpha = 255
+            val moreText = if (hidden > 0) "+$hidden" else ""
+            val moreW = if (hidden > 0) pillText.measureText(moreText) + ctx.dpf(5f) else 0f
             for (i in 0 until shown) {
                 val ev = list[i]
                 val top = y + pillTop + i * (pillH + pillGap)
-                rect.set(x + pad, top, x + cw - pad, top + pillH)
+                val lastWithMore = hidden > 0 && i == shown - 1
+                rect.set(x + pad, top, x + cw - pad - if (lastWithMore) moreW else 0f, top + pillH)
                 val multi = ev.allDay || ev.startDate != ev.endDate
                 fill.color = if (multi) ev.color else (ev.color and 0x00FFFFFF) or (if (Pal.dark) 0x55000000 else 0x33000000)
                 if (!inMonth) fill.alpha = fill.alpha / 2
@@ -139,20 +145,19 @@ class MonthView(ctx: Context) : View(ctx) {
                 pillText.color = if (multi) Color.WHITE else Pal.text
                 if (!inMonth) pillText.alpha = 140
                 val avail = rect.width() - ctx.dpf(6f)
-                val n = pillText.breakText(ev.title, true, avail, null)
-                val t = if (n < ev.title.length) ev.title.substring(0, maxOf(0, n)) else ev.title
+                val n = pillText.breakText(ev.title, true, maxOf(0f, avail), null)
                 canvas.drawText(
-                    t, rect.left + ctx.dpf(3f),
+                    ev.title, 0, n, rect.left + ctx.dpf(3f),
                     rect.centerY() - (pillText.descent() + pillText.ascent()) / 2, pillText,
                 )
-            }
-            if (list.size > shown) {
-                val top = y + pillTop + shown * (pillH + pillGap)
-                pillText.color = Pal.sub
-                canvas.drawText(
-                    "+${list.size - shown}", x + pad + ctx.dpf(3f),
-                    top + pillH / 2 - (pillText.descent() + pillText.ascent()) / 2, pillText,
-                )
+                if (lastWithMore) {
+                    pillText.color = Pal.sub
+                    pillText.alpha = 255
+                    canvas.drawText(
+                        moreText, rect.right + ctx.dpf(3f),
+                        rect.centerY() - (pillText.descent() + pillText.ascent()) / 2, pillText,
+                    )
+                }
             }
         }
     }

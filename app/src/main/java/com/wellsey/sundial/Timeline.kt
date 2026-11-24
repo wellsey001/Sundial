@@ -285,7 +285,7 @@ class TimelineGrid(ctx: Context) : View(ctx) {
         // Today's column
         val ti = days.indexOf(today)
         if (ti >= 0 && days.size > 1) {
-            fill.color = (Pal.accent and 0x00FFFFFF) or (if (Pal.dark) 0x1A000000 else 0x12000000)
+            fill.color = if (Pal.dark) 0x0FFFFFFF else 0x4DFFFFFF
             c.drawRect(gutter + ti * cw, 0f, gutter + (ti + 1) * cw, height.toFloat(), fill)
         }
 
