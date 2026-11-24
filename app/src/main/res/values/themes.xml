@@ -8,5 +8,5 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
-    <color name="bg">#F7F8FA</color>
+    <color name="bg">#FFE6CC</color>
 </resources>

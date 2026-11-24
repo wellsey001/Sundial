@@ -20,7 +20,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 
-/** Colours for light and dark mode. */
+/** Colours for light and dark mode. Panels are glass over the sky, so most fills are see-through. */
 object Pal {
     var dark = false
         private set
@@ -30,15 +30,23 @@ object Pal {
             Configuration.UI_MODE_NIGHT_YES
     }
 
-    val bg get() = if (dark) 0xFF0F1115.toInt() else 0xFFF7F8FA.toInt()
-    val surface get() = if (dark) 0xFF1A1D23.toInt() else 0xFFFFFFFF.toInt()
-    val surface2 get() = if (dark) 0xFF242832.toInt() else 0xFFEEF1F6.toInt()
-    val text get() = if (dark) 0xFFECEFF4.toInt() else 0xFF15181E.toInt()
-    val sub get() = if (dark) 0xFF9AA3B2.toInt() else 0xFF5F6878.toInt()
-    val faint get() = if (dark) 0xFF4C5262.toInt() else 0xFFB4BBC7.toInt()
-    val line get() = if (dark) 0x1FFFFFFF else 0x14000000
-    val accent get() = if (dark) 0xFF5B8FFF.toInt() else 0xFF3D7BFF.toInt()
-    val accentSoft get() = if (dark) 0x335B8FFF else 0x223D7BFF
+    /** Solid fallback when there's no sky to frost. */
+    val bgSolid get() = if (dark) 0xFF151526.toInt() else 0xFFFBF3EE.toInt()
+    val bg get() = bgSolid
+    /** Glass panel tint. */
+    val glass get() = if (dark) 0x52141428 else 0x8CFFFFFF.toInt()
+    val glassStrong get() = if (dark) 0x8C141428.toInt() else 0xBFFFFFFF.toInt()
+    val glassBorder get() = if (dark) 0x33FFFFFF else 0xB3FFFFFF.toInt()
+    val glassHighlight get() = if (dark) 0x4DFFFFFF else 0xE6FFFFFF.toInt()
+    /** Rows and chips sitting on a glass panel. */
+    val surface get() = if (dark) 0x1AFFFFFF else 0x73FFFFFF
+    val surface2 get() = surface
+    val text get() = if (dark) 0xFFF2F1F7.toInt() else 0xFF1C1B24.toInt()
+    val sub get() = if (dark) 0xFFAEAABF.toInt() else 0xFF5E5A6B.toInt()
+    val faint get() = if (dark) 0xFF6E6A80.toInt() else 0xFFA19CAB.toInt()
+    val line get() = if (dark) 0x1FFFFFFF else 0x17000000
+    val accent get() = if (dark) 0xFFFF9466.toInt() else 0xFFF26A3D.toInt()
+    val accentSoft get() = if (dark) 0x33FF9466 else 0x2EF26A3D
     val danger get() = if (dark) 0xFFFF6B6B.toInt() else 0xFFD93636.toInt()
 }
 
@@ -58,9 +66,19 @@ fun rounded(color: Int, radius: Float, strokeWidth: Int = 0, strokeColor: Int = 
 /** Adds a touch ripple clipped to a rounded shape. */
 fun View.pressable(radius: Float) {
     val mask = rounded(Color.WHITE, radius)
-    foreground = RippleDrawable(ColorStateList.valueOf(if (Pal.dark) 0x33FFFFFF else 0x22000000), null, mask)
+    foreground = RippleDrawable(ColorStateList.valueOf(if (Pal.dark) 0x26FFFFFF else 0x1A000000), null, mask)
     isClickable = true
     isFocusable = true
+    setOnTouchListener { v, e ->
+        when (e.actionMasked) {
+            android.view.MotionEvent.ACTION_DOWN ->
+                v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(90).start()
+            android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL ->
+                v.animate().scaleX(1f).scaleY(1f).setDuration(160)
+                    .setInterpolator(android.view.animation.OvershootInterpolator(2f)).start()
+        }
+        false
+    }
 }
 
 fun Context.label(
@@ -105,16 +123,14 @@ fun Context.pill(s: String, filled: Boolean, onClick: () -> Unit): TextView =
         setOnClickListener { onClick() }
     }
 
-/** Uses the theme's light or dark bars. */
+/** Picks light or dark colours. */
 fun Activity.styleWindow() {
     Pal.init(this)
-    window.statusBarColor = Pal.bg
-    window.navigationBarColor = Pal.bg
 }
 
 /** Small line icons, drawn on a 24-unit grid. */
 class Icon(ctx: Context, var kind: Kind, var color: Int = Pal.text) : View(ctx) {
-    enum class Kind { PLUS, CLOSE, MORE, GRID, LIST, BACK, CLOCK, PIN, NOTES, BELL, REPEAT, CALENDAR }
+    enum class Kind { PLUS, CLOSE, MORE, GRID, LIST, BACK, CLOCK, PIN, NOTES, BELL, REPEAT, CALENDAR, SEARCH }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -198,6 +214,10 @@ class Icon(ctx: Context, var kind: Kind, var color: Int = Pal.text) : View(ctx) 
                 path.cubicTo(20f, 16.5f, 19f, 17.5f, 17.5f, 17.5f); path.lineTo(5f, 17.5f)
                 path.moveTo(8f, 14.5f); path.lineTo(5f, 17.5f); path.lineTo(8f, 20.5f)
                 canvas.drawPath(path, paint)
+            }
+            Kind.SEARCH -> {
+                canvas.drawCircle(10.5f, 10.5f, 6f, paint)
+                canvas.drawLine(15f, 15f, 20f, 20f, paint)
             }
             Kind.CALENDAR -> {
                 rect.set(4f, 5.5f, 20f, 20f); canvas.drawRoundRect(rect, 2.5f, 2.5f, paint)

@@ -57,6 +57,11 @@
             android:name=".SettingsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
+
         <!-- Reminders: sent by the phone's calendar storage when one is due -->
         <receiver
             android:name=".ReminderReceiver"

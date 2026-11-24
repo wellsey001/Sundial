@@ -23,9 +23,10 @@ class Prefs(ctx: Context) {
         get() = p.getLong("defaultCal", -1)
         set(v) = p.edit().putLong("defaultCal", v).apply()
 
-    var agenda: Boolean
-        get() = p.getBoolean("agenda", false)
-        set(v) = p.edit().putBoolean("agenda", v).apply()
+    /** 0 month, 1 week, 2 day, 3 list. */
+    var mode: Int
+        get() = p.getInt("mode", if (p.getBoolean("agenda", false)) 3 else 0)
+        set(v) = p.edit().putInt("mode", v).apply()
 
     /** Minutes before, -1 for none. */
     var defaultReminder: Int

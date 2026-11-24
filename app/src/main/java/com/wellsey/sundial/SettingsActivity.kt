@@ -23,17 +23,18 @@ class SettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         styleWindow()
         prefs = Prefs(this)
-        val root = vbox().apply { setBackgroundColor(Pal.bg) }
+        val root = vbox()
         val bar = hbox().apply { setPadding(dp(8), dp(10), dp(14), dp(10)) }
         bar.addView(iconButton(Icon.Kind.BACK) { finish() })
         bar.addView(label("Settings", 20f, Pal.text, bold = true).apply { setPadding(dp(8), 0, 0, 0) })
         root.addView(bar, lp(MATCH, WRAP))
-        val scroll = ScrollView(this)
+        val scroll = ScrollView(this).apply { isVerticalScrollBarEnabled = false }
         body = vbox().apply { setPadding(dp(14), 0, dp(14), dp(32)) }
         scroll.addView(body, FrameLayout.LayoutParams(MATCH, WRAP))
         root.addView(scroll, lp(MATCH, 0, 1f))
-        setContentView(root)
+        setSkyContent(root)
         build()
+        body.staggerIn(this)
     }
 
     private fun build() {
@@ -136,7 +137,7 @@ class SettingsActivity : Activity() {
     }
 
     private fun card(content: View): View = FrameLayout(this).apply {
-        background = rounded(Pal.surface, dpf(20f))
+        glass(dpf(24f))
         setPadding(0, dp(4), 0, dp(4))
         clipToOutline = true
         addView(content, FrameLayout.LayoutParams(MATCH, WRAP))

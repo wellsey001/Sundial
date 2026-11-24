@@ -172,7 +172,7 @@ class EventActivity : Activity() {
     // ---------------------------------------------------------------- layout
 
     private fun buildUi() {
-        val root = vbox().apply { setBackgroundColor(Pal.bg) }
+        val root = vbox()
 
         val bar = hbox().apply { setPadding(dp(8), dp(10), dp(14), dp(10)) }
         bar.addView(iconButton(Icon.Kind.CLOSE) { finish() })
@@ -260,12 +260,12 @@ class EventActivity : Activity() {
         locationEdit.setText(d.location)
         notesEdit.setText(d.notes)
         allDaySwitch.isChecked = d.allDay
-        setContentView(root)
+        setSkyContent(root)
     }
 
     private fun card(content: View): View {
         val c = FrameLayout(this).apply {
-            background = rounded(Pal.surface, dpf(20f))
+            glass(dpf(24f))
             setPadding(dp(4), dp(6), dp(4), dp(6))
             layoutParams = lp(MATCH, WRAP).apply { bottomMargin = dp(12) }
         }

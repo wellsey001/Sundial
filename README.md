@@ -5,7 +5,10 @@
 A clean calendar app for Android. It reads and writes the calendars already on your phone
 (Google, Outlook, Samsung and so on), so everything stays in sync with your accounts.
 
+- Month, week, day and list views on frosted glass over a sky that follows the time of day
 - Month view with coloured event pills; swipe to change month, long-press a day to add an event
+- Week and day timelines: tap a time to add an event, long-press and drag to move one or to draw a new one
+- Search across titles, places and notes
 - Upcoming list for the next four months
 - Add, edit and delete events: all-day, repeats, reminders, location, notes
 - Delete just one repeat or the whole series

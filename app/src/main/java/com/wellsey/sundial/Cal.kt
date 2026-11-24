@@ -111,6 +111,24 @@ object Cal {
             ContentUris.appendId(it, begin)
             ContentUris.appendId(it, end)
         }.build()
+        return read(ctx, uri, hidden).filter { !it.endDate.isBefore(from) && it.startDate.isBefore(until) }
+    }
+
+    /** Occurrences from a year ago to two years ahead whose title, place or notes match [query]. */
+    fun search(ctx: Context, query: String, hidden: Set<Long>): List<Ev> {
+        if (!hasPermission(ctx) || query.isBlank()) return emptyList()
+        val today = LocalDate.now()
+        val begin = today.minusYears(1).atStartOfDay(zone).toInstant().toEpochMilli()
+        val end = today.plusYears(2).atStartOfDay(zone).toInstant().toEpochMilli()
+        val uri = Instances.CONTENT_SEARCH_URI.buildUpon().also {
+            ContentUris.appendId(it, begin)
+            ContentUris.appendId(it, end)
+            it.appendPath(query.trim())
+        }.build()
+        return read(ctx, uri, hidden)
+    }
+
+    private fun read(ctx: Context, uri: android.net.Uri, hidden: Set<Long>): List<Ev> {
         val proj = arrayOf(
             Instances.EVENT_ID, Instances.CALENDAR_ID, Instances.TITLE, Instances.BEGIN, Instances.END,
             Instances.ALL_DAY, Instances.DISPLAY_COLOR, Instances.EVENT_LOCATION, Instances.RRULE,
@@ -136,7 +154,6 @@ object Cal {
                         ed = localDate(maxOf(b, e - 1))
                     }
                     if (ed.isBefore(sd)) ed = sd
-                    if (ed.isBefore(from) || !sd.isBefore(until)) continue
                     out += Ev(
                         eventId = c.getLong(0),
                         calendarId = calId,
@@ -155,6 +172,15 @@ object Cal {
         } catch (_: Exception) {
         }
         return out
+    }
+
+    /** Moves one occurrence to a new start and end (for drag and drop). Returns true if saved. */
+    fun move(ctx: Context, ev: Ev, newBegin: Long, newEnd: Long): Boolean {
+        val d = load(ctx, ev.eventId, ev.begin, ev.end) ?: return false
+        val old = d.rrule
+        d.start = localDateTime(newBegin)
+        d.end = localDateTime(newEnd)
+        return save(ctx, d, old, if (old != null) ev.begin else 0) >= 0
     }
 
     /** Groups occurrences by each day they cover, all-day first then by time. */
